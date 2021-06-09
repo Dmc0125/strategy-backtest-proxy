@@ -32,19 +32,19 @@ const validateInput = (market: string, limit?: string, startTime?: string, endTi
   }
 
   if (startTime && (Number.isNaN(+startTime) || +startTime <= 0)) {
-    return 'startTime must be type of number and higher than 0';
+    return 'Start time must be type of number and higher than 0';
   }
 
   if (endTime && startTime && (Number.isNaN(+endTime) || +endTime <= 0 || +endTime <= +startTime)) {
-    return 'endTime must be type of number, higher than 0 and higher than startTime';
+    return 'End time must be type of number, higher than 0 and higher than startTime';
   }
 
   if (startTime && !endTime) {
-    return 'endTime not specified';
+    return 'End time not specified';
   }
 
   if (!startTime && endTime) {
-    return 'startTime not specified';
+    return 'Start time not specified';
   }
 
   return false;
@@ -70,6 +70,12 @@ router.get('/', async (req, res) => {
   const _exchange = exchange.toLowerCase();
   const _market = market.toUpperCase();
 
+  const options = {
+    limit: limit ? +limit : undefined,
+    startTime: startTime ? +startTime : undefined,
+    endTime: endTime ? +endTime : undefined,
+  };
+
   if (_exchange === 'ftx') {
     if (!validate(timeframe, new RegExp(ftxTimeframes.reduce((acc, tf) => `${acc}|(${tf})`, '').slice(1)))) {
       respond(res, { error: `Valid FTX timeframes are ${ftxTimeframes.reduce((acc, tf) => `${acc}, ${tf}`)}` });
@@ -77,7 +83,7 @@ router.get('/', async (req, res) => {
     }
 
     try {
-      const candlesticks = await ftx.spot.candlesticks(_market, timeframe);
+      const candlesticks = await ftx.spot.candlesticks(_market, timeframe, options);
 
       respond(res, { data: candlesticks });
       return;
@@ -96,11 +102,7 @@ router.get('/', async (req, res) => {
     const binanceMarket = _market.split('/').join('');
 
     try {
-      const candlesticks = await binance.spot.candlesticks(binanceMarket, timeframe, {
-        limit: limit ? +limit : undefined,
-        startTime: startTime ? +startTime : undefined,
-        endTime: endTime ? +endTime : undefined,
-      });
+      const candlesticks = await binance.spot.candlesticks(binanceMarket, timeframe, options);
 
       respond(res, { data: candlesticks });
       return;
