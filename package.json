@@ -1,6 +1,6 @@
 {
   "name": "binance-ftx-proxy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Proxy for Binance and FTX",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "author": "dmc0125",
   "license": "MIT",
   "dependencies": {
-    "binance-api-nodejs": "^0.0.14",
+    "binance-api-nodejs": "^0.0.15",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
